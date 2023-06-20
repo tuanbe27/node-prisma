@@ -1,9 +1,13 @@
+import crypto from "crypto";
+
 import { Prisma } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
-import { LoginUserInput, RegisterUserInput } from "../schemas/user.schema";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import crypto from "crypto";
+import config from "config";
+import { omit } from "lodash";
+
+import { LoginUserInput, RegisterUserInput } from "../schemas/user.schema";
 import {
   createUser,
   excludedFields,
@@ -18,12 +22,10 @@ import AppError from "../utils/handleResponse";
 import { signJwt, verifyJwt } from "../utils/jwt";
 import { TokenType } from "../types";
 import redisClient from "../utils/connectRedis";
-import config from "config";
-import { omit } from "lodash";
 
 // Register User Controller
 export const registerUserHandler = async (
-  req: Request<{}, {}, RegisterUserInput>,
+  req: Request<object, object, RegisterUserInput>,
   res: Response,
   next: NextFunction
 ) => {
@@ -68,7 +70,7 @@ export const registerUserHandler = async (
 
 // Login User Controller
 export const loginUserHandler = async (
-  req: Request<{}, {}, LoginUserInput>,
+  req: Request<object, object, LoginUserInput>,
   res: Response,
   next: NextFunction
 ) => {

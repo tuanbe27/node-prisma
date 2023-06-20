@@ -1,12 +1,13 @@
-import config from "config";
 import { readFileSync } from "fs";
+
+import config from "config";
 import { SignOptions, verify, sign } from "jsonwebtoken";
-import { dirname, join } from "path";
+
 import { TokenType } from "../types";
 
 // Sign Token
 export const signJwt = (
-  payload: Object,
+  payload: object,
   keyName: TokenType,
   options: SignOptions
 ) => {

@@ -1,5 +1,6 @@
 import { Prisma, PrismaClient, User } from "@prisma/client";
 import config from "config";
+
 import redisClient from "../utils/connectRedis";
 import { signJwt } from "../utils/jwt";
 import { TokenType } from "../types";

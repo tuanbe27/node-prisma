@@ -37,8 +37,9 @@ export const loginUserSchema = object({
   }),
 });
 
-export interface RegisterUserInput
-  extends Omit<TypeOf<typeof registerUserSchema>["body"], "passwordConfirm"> {}
+export type RegisterUserInput = Omit<
+  TypeOf<typeof registerUserSchema>["body"],
+  "passwordConfirm"
+>;
 
-export interface LoginUserInput
-  extends Omit<TypeOf<typeof loginUserSchema>["body"], ""> {}
+export type LoginUserInput = Omit<TypeOf<typeof loginUserSchema>["body"], "">;

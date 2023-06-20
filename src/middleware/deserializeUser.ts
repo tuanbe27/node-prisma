@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express";
+import { omit } from "lodash";
+
 import { excludedFields, findUniqueUser } from "../services/user.service";
 import { DefaultErrorMessage, TokenType } from "../types";
 import redisClient from "../utils/connectRedis";
 import AppError from "../utils/handleResponse";
 import { verifyJwt } from "../utils/jwt";
-import { omit } from "lodash";
 
 export const deserializeUser = async (
   req: Request,

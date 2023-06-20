@@ -1,12 +1,14 @@
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 import express, { NextFunction, Request, Response } from "express";
 import config from "config";
-import validateEnv from "./utils/validateEnv";
-import redisClient from "./utils/connectRedis";
 import { PrismaClient } from "@prisma/client";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import morgan from "morgan";
+
+import redisClient from "./utils/connectRedis";
+import validateEnv from "./utils/validateEnv";
 import authRouter from "./routes/auth.route";
 import userRouter from "./routes/user.route";
 import AppError from "./utils/handleResponse";
