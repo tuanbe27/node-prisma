@@ -1,27 +1,27 @@
-import crypto from "crypto";
+import crypto from 'crypto';
 
-import { Prisma } from "@prisma/client";
-import { NextFunction, Request, Response } from "express";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import config from "config";
-import { omit } from "lodash";
+import { Prisma } from '@prisma/client';
+import { NextFunction, Request, Response } from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import config from 'config';
+import { omit } from 'lodash';
 
-import { LoginUserInput, RegisterUserInput } from "../schemas/user.schema";
+import { LoginUserInput, RegisterUserInput } from '../schemas/user.schema';
 import {
   createUser,
   excludedFields,
   findUniqueUser,
   signTokens,
-} from "../services/user.service";
+} from '../services/user.service';
 import {
   accessTokenCookieOption,
   refreshTokenCookieOptions,
-} from "../services/token.service";
-import AppError from "../utils/handleResponse";
-import { signJwt, verifyJwt } from "../utils/jwt";
-import { TokenType } from "../types";
-import redisClient from "../utils/connectRedis";
+} from '../services/token.service';
+import AppError from '../utils/handleResponse';
+import { signJwt, verifyJwt } from '../utils/jwt';
+import { TokenType } from '../types';
+import redisClient from '../utils/connectRedis';
 
 // Register User Controller
 export const registerUserHandler = async (
@@ -32,12 +32,12 @@ export const registerUserHandler = async (
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 12);
 
-    const verifyCode = crypto.randomBytes(32).toString("hex");
+    const verifyCode = crypto.randomBytes(32).toString('hex');
 
     const verificationCode = crypto
-      .createHash("sha256")
+      .createHash('sha256')
       .update(verifyCode)
-      .digest("hex");
+      .digest('hex');
 
     const user = await createUser({
       name: req.body.name,
@@ -47,7 +47,7 @@ export const registerUserHandler = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: {
         user: omit(user, excludedFields),
       },
@@ -57,10 +57,10 @@ export const registerUserHandler = async (
     console.log(err);
 
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
-      if (err.code === "P2002") {
+      if (err.code === 'P2002') {
         return res.status(409).json({
-          status: "fail",
-          message: "Email already exist, please use another email address",
+          status: 'fail',
+          message: 'Email already exist, please use another email address',
         });
       }
     }
@@ -83,21 +83,21 @@ export const loginUserHandler = async (
     );
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      return next(new AppError(400, "Invalid email or password"));
+      return next(new AppError(400, 'Invalid email or password'));
     }
 
     // Sign Tokens
     const { access_token, refresh_token } = await signTokens(user);
 
-    res.cookie("access_token", access_token, accessTokenCookieOption);
-    res.cookie("refresh_token", refresh_token, refreshTokenCookieOptions);
-    res.cookie("logged_id", true, {
+    res.cookie('access_token', access_token, accessTokenCookieOption);
+    res.cookie('refresh_token', refresh_token, refreshTokenCookieOptions);
+    res.cookie('logged_id', true, {
       ...accessTokenCookieOption,
       httpOnly: false,
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       access_token,
     });
   } catch (err) {
@@ -114,7 +114,7 @@ export const refreshAccessToken = async (
 ) => {
   try {
     const refreshToken = req.cookies.refresh_token;
-    const error_message = "Invalid refresh token";
+    const error_message = 'Invalid refresh token';
 
     if (!refreshToken) {
       return next(new AppError(403, error_message));
@@ -149,20 +149,20 @@ export const refreshAccessToken = async (
       { sub: user.id },
       TokenType.ACCESS_TOKEN_PRIVATE,
       {
-        expiresIn: `${config.get<number>("accessTokenExpiresIn")}m`,
+        expiresIn: `${config.get<number>('accessTokenExpiresIn')}m`,
       }
     );
 
     // 4. Add Cookies
-    res.cookie("access_token", access_token, accessTokenCookieOption);
-    res.cookie("logged_in", true, {
+    res.cookie('access_token', access_token, accessTokenCookieOption);
+    res.cookie('logged_in', true, {
       ...accessTokenCookieOption,
       httpOnly: false,
     });
 
     // 5. Send response
     res.status(200).json({
-      status: "success",
+      status: 'success',
       access_token,
     });
   } catch (err) {
@@ -180,13 +180,13 @@ export const logoutUserHandler = async (
 ) => {
   try {
     await redisClient.del(res.locals.user.id);
-    res.cookie("access_token", "", { maxAge: -1 });
-    res.cookie("refresh_token", "", { maxAge: -1 });
-    res.cookie("logged_in", false, { maxAge: -1 });
+    res.cookie('access_token', '', { maxAge: -1 });
+    res.cookie('refresh_token', '', { maxAge: -1 });
+    res.cookie('logged_in', false, { maxAge: -1 });
 
     res.status(200).json({
-      status: "success",
-      message: "Good bye, see you soon",
+      status: 'success',
+      message: 'Good bye, see you soon',
     });
   } catch (error) {
     console.log(`Has error at logoutUserHandler function`);

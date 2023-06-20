@@ -1,11 +1,11 @@
-import { NextFunction, Request, Response } from "express";
-import { omit } from "lodash";
+import { NextFunction, Request, Response } from 'express';
+import { omit } from 'lodash';
 
-import { excludedFields, findUniqueUser } from "../services/user.service";
-import { DefaultErrorMessage, TokenType } from "../types";
-import redisClient from "../utils/connectRedis";
-import AppError from "../utils/handleResponse";
-import { verifyJwt } from "../utils/jwt";
+import { excludedFields, findUniqueUser } from '../services/user.service';
+import { DefaultErrorMessage, TokenType } from '../types';
+import redisClient from '../utils/connectRedis';
+import AppError from '../utils/handleResponse';
+import { verifyJwt } from '../utils/jwt';
 
 export const deserializeUser = async (
   req: Request,
@@ -17,9 +17,9 @@ export const deserializeUser = async (
     // Get access token from header or cookies
     if (
       req.headers.authorization &&
-      req.headers.authorization.startsWith("Bearer")
+      req.headers.authorization.startsWith('Bearer')
     ) {
-      access_token = req.headers.authorization.split(" ")[1];
+      access_token = req.headers.authorization.split(' ')[1];
     } else if (req.cookies.access_token) {
       access_token = req.cookies.access_token;
     }

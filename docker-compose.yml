@@ -1,10 +1,10 @@
-version: "3"
+version: '3'
 services:
   postgres:
     image: postgres:latest
     container_name: postgres
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - postgresDB:/data/postgres
     env_file:
@@ -14,7 +14,7 @@ services:
     image: redis:alpine
     container_name: redis
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - redisDB:/data
 volumes:

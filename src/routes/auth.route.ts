@@ -1,24 +1,24 @@
-import express from "express";
+import express from 'express';
 
 import {
   loginUserHandler,
   logoutUserHandler,
   refreshAccessToken,
   registerUserHandler,
-} from "../controllers/auth.controller";
-import { deserializeUser } from "../middleware/deserializeUser";
-import { requireUser } from "../middleware/requireUser";
-import { validate } from "../middleware/validate";
-import { loginUserSchema, registerUserSchema } from "../schemas/user.schema";
+} from '../controllers/auth.controller';
+import { deserializeUser } from '../middleware/deserializeUser';
+import { requireUser } from '../middleware/requireUser';
+import { validate } from '../middleware/validate';
+import { loginUserSchema, registerUserSchema } from '../schemas/user.schema';
 
 const router = express.Router();
 
-router.post("/register", validate(registerUserSchema), registerUserHandler);
+router.post('/register', validate(registerUserSchema), registerUserHandler);
 
-router.post("/login", validate(loginUserSchema), loginUserHandler);
+router.post('/login', validate(loginUserSchema), loginUserHandler);
 
-router.get("/refresh", refreshAccessToken);
+router.get('/refresh', refreshAccessToken);
 
-router.get("/logout", deserializeUser, requireUser, logoutUserHandler);
+router.get('/logout', deserializeUser, requireUser, logoutUserHandler);
 
 export default router;

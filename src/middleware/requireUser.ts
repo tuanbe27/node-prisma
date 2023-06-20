@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from 'express';
 
-import AppError from "../utils/handleResponse";
+import AppError from '../utils/handleResponse';
 
 export const requireUser = (
   req: Request,

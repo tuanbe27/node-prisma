@@ -1,18 +1,18 @@
-import { Prisma, PrismaClient, User } from "@prisma/client";
-import config from "config";
+import { Prisma, PrismaClient, User } from '@prisma/client';
+import config from 'config';
 
-import redisClient from "../utils/connectRedis";
-import { signJwt } from "../utils/jwt";
-import { TokenType } from "../types";
+import redisClient from '../utils/connectRedis';
+import { signJwt } from '../utils/jwt';
+import { TokenType } from '../types';
 
 const prisma = new PrismaClient();
 
 export const excludedFields = [
-  "password",
-  "verified",
-  "verificationCode",
-  "passwordResetAt",
-  "passwordResetToken",
+  'password',
+  'verified',
+  'verificationCode',
+  'passwordResetAt',
+  'passwordResetToken',
 ];
 
 export const createUser = async (input: Prisma.UserCreateInput) => {
@@ -31,7 +31,7 @@ export const findUniqueUser = async (
 export const signTokens = async (user: Prisma.UserCreateInput) => {
   // 1. Create Session
   redisClient.set(`${user.id}`, JSON.stringify(user), {
-    EX: config.get<number>("redisCacheExpiresIn") * 60,
+    EX: config.get<number>('redisCacheExpiresIn') * 60,
   });
 
   // 2. Create Access and Refresh tokens
@@ -39,7 +39,7 @@ export const signTokens = async (user: Prisma.UserCreateInput) => {
     { sub: user.id },
     TokenType.ACCESS_TOKEN_PRIVATE,
     {
-      expiresIn: `${config.get<number>("accessTokenExpiresIn")}m`,
+      expiresIn: `${config.get<number>('accessTokenExpiresIn')}m`,
     }
   );
 
@@ -47,7 +47,7 @@ export const signTokens = async (user: Prisma.UserCreateInput) => {
     { sub: user.id },
     TokenType.REFRESH_TOKEN_PRIVATE,
     {
-      expiresIn: `${config.get<number>("refreshTokenExpiresIn")}m`,
+      expiresIn: `${config.get<number>('refreshTokenExpiresIn')}m`,
     }
   );
 

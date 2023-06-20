@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from 'express';
 
 // Test authentication
 export const getMeHandler = async (
@@ -10,7 +10,7 @@ export const getMeHandler = async (
     const user = res.locals.user;
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: { user },
     });
   } catch (error) {
