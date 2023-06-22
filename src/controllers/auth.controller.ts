@@ -5,14 +5,17 @@ import { NextFunction, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import config from 'config';
-import { omit } from 'lodash';
 
-import { LoginUserInput, RegisterUserInput } from '../schemas/user.schema';
+import {
+  LoginUserInput,
+  RegisterUserInput,
+  VerifyEmailInput,
+} from '../schemas/user.schema';
 import {
   createUser,
-  excludedFields,
   findUniqueUser,
   signTokens,
+  updateUser,
 } from '../services/user.service';
 import {
   accessTokenCookieOption,
@@ -22,6 +25,7 @@ import AppError from '../utils/handleResponse';
 import { signJwt, verifyJwt } from '../utils/jwt';
 import { TokenType } from '../types';
 import redisClient from '../utils/connectRedis';
+import Email from '../utils/email';
 
 // Register User Controller
 export const registerUserHandler = async (
@@ -46,12 +50,27 @@ export const registerUserHandler = async (
       verificationCode,
     });
 
-    res.status(201).json({
-      status: 'success',
-      data: {
-        user: omit(user, excludedFields),
-      },
-    });
+    const rediectUrl = `${config.get<string>(
+      'origin'
+    )}/api/auth/verifyemail/${verifyCode}`;
+
+    try {
+      await new Email(user, rediectUrl).sendVerificationCode();
+      await updateUser({ id: user.id }, { verificationCode });
+
+      res.status(201).json({
+        status: 'success',
+        message:
+          'An email with a verification code has been sent to your email',
+      });
+    } catch (error) {
+      console.log('error when send register email', error);
+      await updateUser({ id: user.id }, { verificationCode: undefined });
+      return res.status(500).json({
+        status: 'error',
+        message: 'There was an error sending email, please try again',
+      });
+    }
   } catch (err) {
     console.log(`Has error at registerUserHandler function`);
     console.log(err);
@@ -82,7 +101,21 @@ export const loginUserHandler = async (
       { id: true, email: true, verified: true, password: true }
     );
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user) {
+      return next(new AppError(400, 'Invalid email or password'));
+    }
+
+    // Check if user is verified
+    if (!user.verified) {
+      return next(
+        new AppError(
+          401,
+          'You are not verified, please verify your email to login'
+        )
+      );
+    }
+
+    if (!(await bcrypt.compare(password, user.password))) {
       return next(new AppError(400, 'Invalid email or password'));
     }
 
@@ -191,5 +224,45 @@ export const logoutUserHandler = async (
   } catch (error) {
     console.log(`Has error at logoutUserHandler function`);
     next(error);
+  }
+};
+
+// Verify Email Handler
+export const verifyEmailHandler = async (
+  req: Request<VerifyEmailInput>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const verificationCode = crypto
+      .createHash('sha256')
+      .update(req.params.verificationCode)
+      .digest('hex');
+
+    const user = await updateUser(
+      { verificationCode },
+      { verified: true, verificationCode: undefined },
+      { email: true }
+    );
+
+    if (!user) {
+      return next(new AppError(401, 'Could not verify email'));
+    }
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Email verified successfully',
+    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    console.log('Have error on verifyEmailHandler function', err);
+
+    if (err.code === 'P2025') {
+      return res.status(403).json({
+        status: 'fail',
+        message: `Verification code is invalid or user doesn't exist`,
+      });
+    }
+    next(err);
   }
 };

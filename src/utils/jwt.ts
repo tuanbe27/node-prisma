@@ -10,7 +10,7 @@ export const signJwt = (
   payload: object,
   keyName: TokenType,
   options: SignOptions
-) => {
+): string => {
   const privateKey = Buffer.from(
     config.get<string>(keyName),
     'base64'
