@@ -16,10 +16,10 @@ export const signJwt = (
     'base64'
   ).toString('ascii');
 
-  // Read the private key from a file
-  const test = readFileSync('public_key.pem', 'utf8');
-  const buff = Buffer.from(test).toString('base64');
-  console.log(buff);
+  // // Read the private key from a file
+  // const test = readFileSync('public_key.pem', 'utf8');
+  // const buff = Buffer.from(test).toString('base64');
+  // console.log(buff);
 
   return sign(payload, privateKey, {
     ...(options && options),

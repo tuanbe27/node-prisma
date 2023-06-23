@@ -44,7 +44,7 @@ async function bootstrap() {
 
   // ROUTES
   app.use('/api/auth', authRouter);
-  app.use('/api/users', userRouter);
+  app.use('/api/user', userRouter);
 
   //Testing
   app.get('/api/healthchecker', async (_, res: Response) => {

@@ -54,11 +54,11 @@ export const resetPasswordSchema = object({
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$/,
       'Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character'
     ),
-    confirmPassword: string({ required_error: 'Password is required' }).regex(
+    passwordConfirm: string({ required_error: 'Password is required' }).regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$/,
       'Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character'
     ),
-  }).refine((data) => data.password === data.confirmPassword, {
+  }).refine((data) => data.password === data.passwordConfirm, {
     message: 'Passwords do not match',
     path: ['passwordConfirm'],
   }),

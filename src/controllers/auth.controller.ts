@@ -133,7 +133,7 @@ export const loginUserHandler = async (
 
     res.cookie('access_token', access_token, accessTokenCookieOption);
     res.cookie('refresh_token', refresh_token, refreshTokenCookieOptions);
-    res.cookie('logged_id', true, {
+    res.cookie('logged_in', true, {
       ...accessTokenCookieOption,
       httpOnly: false,
     });
