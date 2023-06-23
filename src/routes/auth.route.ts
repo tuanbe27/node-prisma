@@ -1,18 +1,22 @@
 import express from 'express';
 
 import {
+  forgotPasswordHandler,
   loginUserHandler,
   logoutUserHandler,
   refreshAccessToken,
   registerUserHandler,
+  resetPasswordHandler,
   verifyEmailHandler,
 } from '../controllers/auth.controller';
 import { deserializeUser } from '../middleware/deserializeUser';
 import { requireUser } from '../middleware/requireUser';
 import { validate } from '../middleware/validate';
 import {
+  forgotPasswordSchema,
   loginUserSchema,
   registerUserSchema,
+  resetPasswordSchema,
   verifyEmailSchema,
 } from '../schemas/user.schema';
 
@@ -31,5 +35,15 @@ router.get(
 );
 
 router.get('/logout', deserializeUser, requireUser, logoutUserHandler);
+router.post(
+  '/forgotpassword',
+  validate(forgotPasswordSchema),
+  forgotPasswordHandler
+);
+router.patch(
+  '/resetpassword/:resetToken',
+  validate(resetPasswordSchema),
+  resetPasswordHandler
+);
 
 export default router;

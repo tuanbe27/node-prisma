@@ -19,13 +19,15 @@
 - Refresh the access token when expired
 - Retrieve his profile information only if logged in.
 
-| RESOURCE | HTTP METHOD | ROUTE              | DESCRIPTION                      |
-| -------- | ----------- | ------------------ | -------------------------------- |
-| users    | GET         | /api/users/me      | Retrieve user’s information      |
-| auth     | POST        | /api/auth/register | Register new user                |
-| auth     | POST        | /api/auth/login    | Login registered user            |
-| auth     | GET         | /api/auth/refresh  | Refresh the expired access token |
-| auth     | GET         | /api/auth/logout   | Logout the user                  |
+| RESOURCE | HTTP METHOD | ROUTE                               | DESCRIPTION                      |
+| -------- | ----------- | ----------------------------------- | -------------------------------- |
+| users    | GET         | /api/users/me                       | Retrieve user’s information      |
+| auth     | POST        | /api/auth/register                  | Register new user                |
+| auth     | POST        | /api/auth/login                     | Login registered user            |
+| auth     | GET         | /api/auth/refresh                   | Refresh the expired access token |
+| auth     | GET         | /api/auth/logout                    | Logout the user                  |
+| user     | POST        | /api/auth/forgotpassword            | To request a reset token         |
+| user     | PATCH       | /api/auth/resetpassword/:resetToken | To reset the password            |
 
 ## User Login and Register Flow with JWT Authentication
 

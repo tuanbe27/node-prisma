@@ -31,8 +31,8 @@
   },
   "scripts": {
     "start": "ts-node-dev --respawn --transpile-only --exit-child src/app.ts",
-    "migrate": "npx prisma migrate dev --name user-entity && npx prisma generate",
-    "push": "npx prisma db push",
+    "db:migrate": "npx prisma migrate dev --name user-entity && npx prisma generate",
+    "db:push": "npx prisma db push",
     "build": "tsc . -p",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",

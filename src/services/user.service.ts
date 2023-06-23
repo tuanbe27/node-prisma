@@ -22,7 +22,7 @@ export const createUser = async (input: Prisma.UserCreateInput) => {
 };
 
 export const findUser = async (
-  where: Prisma.UserWhereUniqueInput,
+  where: Prisma.UserWhereInput,
   select?: Prisma.UserSelect
 ) => {
   return (await prisma.user.findFirst({
